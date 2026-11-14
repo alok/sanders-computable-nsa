@@ -1,0 +1,30 @@
+name: Lean 4 CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl https://elan.lean-lang.org/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+      - name: Build with --wfail (0 warnings, 0 sorry)
+        run: lake --wfail build
+
+      - name: Run executable test suite
+        run: lake test
+
+      - name: Run live CLI extraction showcase
+        run: lake exe sanders-nsa
+
+      - name: Run kernel axiom & computability audit
+        run: lake env lean SandersNSA/AxiomAudit.lean
