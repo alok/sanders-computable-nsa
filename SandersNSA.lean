@@ -19,6 +19,7 @@ import SandersNSA.ReverseMath.KleeneDialogue
 import SandersNSA.ReverseMath.Provident
 import SandersNSA.ReverseMath.LoebMeasure
 import SandersNSA.ReverseMath.StatefulRealizers
+import SandersNSA.AxiomAudit
 
 /-!
 # Root module for `sanders-computable-nsa`

@@ -167,7 +167,7 @@ theorem mem_countdownRange_iff (B m : Nat) : m ∈ countdownRange B ↔ m ≤ B 
   induction B with
   | zero =>
       simp only [countdownRange, List.mem_singleton]
-      omega
+      exact ⟨fun h => by subst h; exact Nat.le_refl 0, Nat.eq_zero_of_le_zero⟩
   | succ n ih =>
       simp only [countdownRange, List.mem_cons]
       constructor

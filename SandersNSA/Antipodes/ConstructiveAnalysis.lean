@@ -184,9 +184,8 @@ theorem le_total (p q : QVal) : le p q ∨ le q p := by
   unfold le
   omega
 
-theorem not_lt_iff_le (p q : QVal) : ¬ lt p q ↔ le q p := by
-  unfold lt le
-  omega
+theorem not_lt_iff_le (p q : QVal) : ¬ lt p q ↔ le q p :=
+  Int.not_lt
 
 theorem lt_imp_le {p q : QVal} (h : lt p q) : le p q := by
   unfold lt le at *
