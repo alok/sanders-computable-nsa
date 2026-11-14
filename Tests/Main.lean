@@ -3,6 +3,7 @@ import SandersNSA
 open SandersNSA.SystemH.Examples
 open SandersNSA.Antipodes
 open SandersNSA.Tactic
+open SandersNSA.ReverseMath
 
 def main : IO Unit := do
   assert! (SandersNSA.version == "0.1.0")
@@ -55,3 +56,43 @@ def main : IO Unit := do
   assert! ((lookupDualConcept ``RiemannIntegrableWithModulus).map Prod.fst == some ``SRiemannIntegrable)
   assert! (id_sContinuousOn.haloScale 9 == 9)
   IO.println "Milestone 3 (Tactic & SetTypeBridge) tests passed!"
+
+  -- Milestone 4: Higher-Order Reverse Math, Provident Set Theory, Loeb Measure & Stateful Realizers
+  -- 1. Independence (`DualQ` nilpotent standard part & `invSqrt2Seq` at k = 99)
+  let epsDual : DualQ := DualQ.eps
+  let epsSq := DualQ.mul epsDual epsDual
+  assert! (QVal.eqvB epsSq.std 0 && QVal.eqvB epsSq.inf 0)
+  assert! (QVal.eqvB (DualQ.st (DualQ.add (DualQ.embed 3) epsDual)) 3)
+  let approxInvSqrt2 := invSqrt2Seq 99
+  assert! (QVal.leB (QVal.dist (approxInvSqrt2 * approxInvSqrt2) ⟨1, 1⟩) (QVal.unitFrac 99))
+  -- 2. Cousin & Pincherle
+  assert! ((solveUniformCousin 7).length == 8)
+  -- 3. Borel Countability & Jordan BV Decomposition
+  let oscSeq : Nat → QVal := fun n => if n % 2 == 0 then 0 else 1
+  assert! (QVal.eqvB (totalVariation oscSeq 6) 6)
+  assert! (QVal.eqvB (oscSeq 0 + posVariation oscSeq 5 - negVariation oscSeq 5) (oscSeq 5))
+  assert! (countLargeJumps oscSeq 1 6 == 6)
+  -- 4. Continuity Zoo (`cliquish_isolatedSpike`)
+  let boxSpike := cliquish_isolatedSpike.selectBox ⟨1, 1⟩ 2 4
+  assert! (isolatedSpike boxSpike.lo == 0)
+  assert! (isolatedSpike boxSpike.hi == 0)
+  -- 5. Kleene S1-S9 Dialogue Trees & Uniform Fan Modulus
+  let dParity4 := Dialogue.parityPrefixDialogue 4
+  assert! (dParity4.fanModulus == 4)
+  assert! (dParity4.eval (fun i => decide (i % 2 == 0)) == false)
+  assert! (Dialogue.adaptiveLookupDialogue.eval (fun i => i + 3) == 7)
+  -- 6. Mathias's Provident Set Theory (`PROV`) without Powerset
+  let ord3 := HF.vonNeumann 3
+  assert! (ord3.elems.length == 3)
+  assert! (HF.memB (HF.vonNeumann 2) ord3 == true)
+  let cart22 := HF.cartesian (HF.vonNeumann 2) (HF.vonNeumann 2)
+  assert! (HF.memB (HF.kpair (HF.vonNeumann 0) (HF.vonNeumann 1)) cart22 == true)
+  -- 7. Hyperfinite Counting & Loeb Measure / Riemann Expectation Bridge
+  let pEven := hyperfiniteProb 9 (fun i => decide (i % 2 == 0))
+  assert! (QVal.eqvB pEven ⟨1, 1⟩)
+  assert! (hyperfiniteExpect 9 (fun i => QVal.gridPt 9 i) == uniformGridSum id 9)
+  -- 8. Imperative / Stateful Realizer `do`-notation extraction
+  let (storeLen, rootSub) := extractedQuadraticRoot
+  assert! (storeLen == 7)
+  assert! (isQuadraticRoot rootSub.val == true)
+  IO.println "Milestone 4 (ReverseMath, KleeneDialogue, Provident, Loeb & StatefulRealizers) tests passed!"
