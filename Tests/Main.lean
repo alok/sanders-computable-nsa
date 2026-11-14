@@ -2,6 +2,7 @@ import SandersNSA
 
 open SandersNSA.SystemH.Examples
 open SandersNSA.Antipodes
+open SandersNSA.Tactic
 
 def main : IO Unit := do
   assert! (SandersNSA.version == "0.1.0")
@@ -40,3 +41,17 @@ def main : IO Unit := do
   -- Abstract interpretation candidate range
   assert! ((boundApprox 4).candidates.length == 5)
   IO.println "Milestone 2 (Antipodes) tests passed!"
+
+  -- Milestone 3: SetTypeBridge & NSA ↔ Constructive Translation Tactics
+  let hNat := HyperfiniteSet.natRange 10
+  assert! (hNat.card == 11)
+  let hEvens := hNat.sep (fun n => decide (n % 2 == 0))
+  assert! (hEvens.card == 6)
+  let hGt7 : HyperfiniteSet.existsB (fun n => decide (n > 7 ∧ n % 2 == 0)) hNat = true := by decide
+  let wEven := HyperfiniteSet.reifyFromBool hNat (fun n => decide (n > 7 ∧ n % 2 == 0)) hGt7
+  assert! (wEven.val == 8)
+  -- Bidirectional tactic translation dictionary lookup & extracted modulus check
+  assert! ((lookupDualConcept ``SContinuousOn).map Prod.fst == some ``UniformContOn)
+  assert! ((lookupDualConcept ``RiemannIntegrableWithModulus).map Prod.fst == some ``SRiemannIntegrable)
+  assert! (id_sContinuousOn.haloScale 9 == 9)
+  IO.println "Milestone 3 (Tactic & SetTypeBridge) tests passed!"
